@@ -4,12 +4,14 @@ package rbtree
 
 import (
 	"fmt"
+	"sync"
 )
 
 // Tree represents a Red-Black Tree. Use the public API of this structure
 // to perform operations against the Tree.
 type Tree struct {
 	root  *node
+	mtx   sync.RWMutex
 	count uint
 }
 
@@ -21,7 +23,11 @@ func NewTree() *Tree {
 
 // Len returns the number of nodes currently in the Tree.
 func (tree *Tree) Len() uint {
-	return tree.count
+	tree.mtx.RLock()
+	count := tree.count
+	tree.mtx.RUnlock()
+
+	return count
 }
 
 // Insert adds a new node to the Tree, indexed by the given key.
