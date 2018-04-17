@@ -98,7 +98,41 @@ func (tree *Tree) balance(n *node) {
 }
 
 func (tree *Tree) leftRotate(n *node) {
+	y := n.right
+	n.right = y.left
+
+	if y.left != nil {
+		y.left.parent = n
+	}
+	y.parent = n.parent
+
+	if n.parent == nil {
+		tree.root = y
+	} else if n == n.parent.left {
+		n.parent.left = y
+	} else {
+		n.parent.right = y
+	}
+	y.left = n
+	n.parent = y
 }
 
 func (tree *Tree) rightRotate(n *node) {
+	y := n.left
+	n.left = y.right
+
+	if y.right != nil {
+		y.right.parent = n
+	}
+	y.parent = n.parent
+
+	if n.parent == nil {
+		tree.root = y
+	} else if n == n.parent.left {
+		n.parent.left = y
+	} else {
+		n.parent.right = y
+	}
+	y.right = n
+	n.parent = y
 }
