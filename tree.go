@@ -3,6 +3,7 @@
 package rbtree
 
 import (
+	"bytes"
 	"fmt"
 	"sync"
 )
@@ -32,12 +33,65 @@ func (tree *Tree) Len() uint {
 
 // Insert adds a new node to the Tree, indexed by the given key.
 func (tree *Tree) Insert(key []byte, value interface{}) error {
-	return fmt.Errorf("Unimplemented")
+	tree.mtx.Lock()
+	defer tree.mtx.Unlock()
+
+	n := &node{key: key, value: value}
+
+	// First step is to do a standard BST insertion.
+	if err := tree.bstInsert(n); err != nil {
+		return err
+	}
+
+	return fmt.Errorf("Under Construction")
 }
 
 // Delete removes a node from the Tree that matches the given key.
 func (tree *Tree) Delete(key []byte) error {
 	return fmt.Errorf("Unimplemented")
+}
+
+func (tree *Tree) bstInsert(n *node) error {
+	curr := tree.root
+
+	// Tree is empty, tweak the node as root.
+	if curr == nil {
+		n.color = Black
+		tree.root = n
+		tree.count++
+		return nil
+	}
+
+	var parent *node
+
+	// Iteratively search for a parent to dangle from.
+	for curr != nil {
+		parent = curr
+
+		// TODO(toru): Support user-supplied comparator function.
+		cmp := bytes.Compare(n.key, curr.key)
+
+		if cmp < 0 {
+			curr = curr.left
+		} else if cmp > 0 {
+			curr = curr.right
+		} else {
+			// TODO(toru): Support duplicate keys like many tree-based key-value
+			// databases do. Until then, duplication is an error for simplicity.
+			return fmt.Errorf("duplicate key")
+		}
+	}
+
+	// Found the parent. Link it to the node and vice versa.
+	n.parent = parent
+	if bytes.Compare(n.key, parent.key) < 0 {
+		parent.left = n
+	} else {
+		parent.right = n
+	}
+
+	tree.count++
+	return nil
 }
 
 func (tree *Tree) balance(n *node) {
