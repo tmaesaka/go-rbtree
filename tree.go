@@ -43,7 +43,58 @@ func (tree *Tree) Insert(key []byte, value interface{}) error {
 		return err
 	}
 
-	return fmt.Errorf("Under Construction")
+	// Next step is to fix any Red-Black Tree property violations caused
+	// by the node insertion. Work our way up the tree from the node.
+	curr := n
+	for {
+		// Case 1: Root node. Paint it black and we're done.
+		if curr.parent == nil {
+			curr.color = Black
+			break
+		}
+
+		// Case 2: Parent node is painted black, nothing to do.
+		if curr.parent.color == Black {
+			break
+		}
+
+		// Pointers to grasp the state of the current subtree.
+		uncle := curr.uncle()
+		grandparent := curr.grandparent()
+
+		// Case 3: Parent and Uncle nodes are painted red.
+		if uncle != nil && uncle.color == Red {
+			curr.parent.color = Black
+			uncle.color = Black
+			grandparent.color = Red
+
+			// Work our way up the tree.
+			curr = grandparent
+			continue
+		}
+
+		// Case 4: Getting here means the parent is painted red and the uncle is
+		// painted black. Rotate the branch if the current node is an inner-node.
+		if grandparent.left != nil && curr == grandparent.left.right {
+			tree.leftRotate(curr.parent)
+			curr = curr.left
+		} else if grandparent.right != nil && curr == grandparent.right.left {
+			tree.rightRotate(curr.parent)
+			curr = curr.right
+		}
+
+		// Getting here means it's safe to run rotation in order to make the previous
+		// parent become the parent of both curr and former grandparent.
+		if curr == curr.parent.left {
+			tree.rightRotate(grandparent)
+		} else {
+			tree.leftRotate(grandparent)
+		}
+		curr.parent.color = Black
+		grandparent.color = Red
+	}
+
+	return nil
 }
 
 // Delete removes a node from the Tree that matches the given key.
