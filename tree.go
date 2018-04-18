@@ -33,10 +33,11 @@ func (tree *Tree) Len() uint {
 
 // Find returns a node that matches the given key, otherwise nil.
 // FIXME(toru): This function should return an iterator.
-func (tree *Tree) Find(key []byte) *node {
+func (tree *Tree) Find(key []byte) (*node, bool) {
 	tree.mtx.RLock()
 	defer tree.mtx.RUnlock()
 
+	var found bool
 	curr := tree.root
 	for curr != nil {
 		cmp := bytes.Compare(key, curr.key)
@@ -45,10 +46,11 @@ func (tree *Tree) Find(key []byte) *node {
 		} else if cmp > 0 {
 			curr = curr.right
 		} else {
+			found = true
 			break
 		}
 	}
-	return curr
+	return curr, found
 }
 
 // Insert adds a new node to the Tree, indexed by the given key.
