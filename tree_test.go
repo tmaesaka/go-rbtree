@@ -20,6 +20,22 @@ func TestLen(t *testing.T) {
 	}
 }
 
+func TestFind(t *testing.T) {
+	tree := NewTree()
+	tree.Insert([]byte("apple"), "sauce")
+	tree.Insert([]byte("banana"), "smoothie")
+
+	node := tree.Find([]byte("apple"))
+	if node.value != "sauce" {
+		t.Errorf("expected sauce, got: %s", node.value)
+	}
+
+	node = tree.Find([]byte("grape"))
+	if node != nil {
+		t.Errorf("expected node to be nil, got: %v", node)
+	}
+}
+
 func TestInsert(t *testing.T) {
 	t.Run("sequence input", func(t *testing.T) {
 		tree := NewTree()
