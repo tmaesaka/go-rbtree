@@ -167,7 +167,18 @@ func (tree *Tree) bstInsert(n *node) error {
 	return nil
 }
 
-func (tree *Tree) balance(n *node) {
+func (tree *Tree) replaceNode(oldNode, newNode *node) {
+	if oldNode.parent == nil {
+		tree.root = newNode
+	} else if oldNode == oldNode.parent.left {
+		oldNode.parent.left = newNode
+	} else {
+		oldNode.parent.right = newNode
+	}
+
+	if newNode != nil {
+		newNode.parent = oldNode.parent
+	}
 }
 
 func (tree *Tree) leftRotate(n *node) {
