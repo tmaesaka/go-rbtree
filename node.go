@@ -45,3 +45,12 @@ func (n *node) uncle() *node {
 	}
 	return n.parent.sibling()
 }
+
+// minNode returns a pointer to the minimum node in the subtree.
+func (n *node) minNode() *node {
+	curr := n
+	for curr.left != nil {
+		curr = curr.left
+	}
+	return curr
+}
