@@ -66,22 +66,10 @@ func (tree *Tree) Height() uint {
 // FIXME(toru): This function should return an iterator.
 func (tree *Tree) Find(key []byte) (*node, bool) {
 	tree.mtx.RLock()
-	defer tree.mtx.RUnlock()
+	n, ok := tree.find(key)
+	tree.mtx.RUnlock()
 
-	var found bool
-	curr := tree.root
-	for curr != nil {
-		cmp := bytes.Compare(key, curr.key)
-		if cmp < 0 {
-			curr = curr.left
-		} else if cmp > 0 {
-			curr = curr.right
-		} else {
-			found = true
-			break
-		}
-	}
-	return curr, found
+	return n, ok
 }
 
 // Insert adds a new node to the Tree, indexed by the given key.
@@ -250,4 +238,21 @@ func (tree *Tree) rightRotate(n *node) {
 	}
 	y.right = n
 	n.parent = y
+}
+
+func (tree *Tree) find(key []byte) (*node, bool) {
+	var found bool
+	curr := tree.root
+	for curr != nil {
+		cmp := bytes.Compare(key, curr.key)
+		if cmp < 0 {
+			curr = curr.left
+		} else if cmp > 0 {
+			curr = curr.right
+		} else {
+			found = true
+			break
+		}
+	}
+	return curr, found
 }
