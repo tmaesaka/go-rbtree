@@ -20,6 +20,24 @@ func TestLen(t *testing.T) {
 	}
 }
 
+func TestHeight(t *testing.T) {
+	tree := NewTree()
+
+	height := tree.Height()
+	if height != 0 {
+		t.Errorf("expected: 0, got: %d", height)
+	}
+
+	for i := 97; i <= 122; i++ {
+		tree.Insert([]byte(string(i)), nil)
+	}
+
+	height = tree.Height()
+	if height != 7 {
+		t.Errorf("expected: 7, got: %d", height)
+	}
+}
+
 func TestFind(t *testing.T) {
 	tree := NewTree()
 	tree.Insert([]byte("apple"), "sauce")

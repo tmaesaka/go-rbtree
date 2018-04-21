@@ -31,6 +31,37 @@ func (tree *Tree) Len() uint {
 	return count
 }
 
+// Height returns the height (maximum depth) of the Tree.
+func (tree *Tree) Height() uint {
+	tree.mtx.RLock()
+	defer tree.mtx.RUnlock()
+
+	var height uint
+	if tree.root == nil {
+		return height
+	}
+
+	// TODO(toru): Try using buffered channel as a queue.
+	queue := []*node{tree.root}
+	var curr *node
+
+	for len(queue) > 0 {
+		size := len(queue)
+		for i := size; i > 0; i-- {
+			// Shift
+			curr, queue = queue[0], queue[1:]
+			if curr.left != nil {
+				queue = append(queue, curr.left)
+			}
+			if curr.right != nil {
+				queue = append(queue, curr.right)
+			}
+		}
+		height++
+	}
+	return height
+}
+
 // Find returns a node that matches the given key, otherwise nil.
 // FIXME(toru): This function should return an iterator.
 func (tree *Tree) Find(key []byte) (*node, bool) {
