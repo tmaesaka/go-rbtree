@@ -1,7 +1,9 @@
 package rbtree
 
 import (
+	"sort"
 	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -81,5 +83,23 @@ func TestInsert(t *testing.T) {
 			t.Errorf("expected ddd (red), got: %s (%s)",
 				rr.key, nodeColorLabel[rr.color])
 		}
+	})
+}
+
+func TestInorder(t *testing.T) {
+	tree := NewTree()
+	keys := []string{"x", "c", "a", "y", "b", "z"}
+
+	for _, key := range keys {
+		tree.Insert([]byte(key), nil)
+	}
+
+	i := 0
+	sort.Strings(keys)
+	tree.Inorder(func(k []byte, v interface{}) {
+		if strings.Compare(keys[i], string(k)) != 0 {
+			t.Errorf("expected: %s, got: %s", keys[i], string(k))
+		}
+		i++
 	})
 }

@@ -143,6 +143,24 @@ func (tree *Tree) Delete(key []byte) error {
 	return fmt.Errorf("Unimplemented")
 }
 
+// Inorder traverses the tree in in-order. Given callback function
+// is called on each node visit. Intended for debugging purpose.
+func (tree *Tree) Inorder(cb func([]byte, interface{})) {
+	stack := []*node{}
+	curr := tree.root
+
+	for len(stack) > 0 || curr != nil {
+		if curr != nil {
+			stack = append([]*node{curr}, stack...)
+			curr = curr.left
+		} else {
+			curr, stack = stack[0], stack[1:]
+			cb(curr.key, curr.value)
+			curr = curr.right
+		}
+	}
+}
+
 func (tree *Tree) bstInsert(n *node) error {
 	curr := tree.root
 
