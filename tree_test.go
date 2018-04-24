@@ -86,6 +86,29 @@ func TestInsert(t *testing.T) {
 	})
 }
 
+func TestUpdate(t *testing.T) {
+	tree := NewTree()
+	testKey := []byte("apricot")
+	testVal := "yummy cobbler"
+
+	if err := tree.Update([]byte("apricot"), "new value"); err == nil {
+		t.Errorf("expected node to not exist")
+	}
+
+	tree.Insert(testKey, "jam")
+	tree.Insert([]byte("banana"), "smoothie")
+	tree.Insert([]byte("clementine"), "cake")
+
+	if err := tree.Update(testKey, testVal); err != nil {
+		t.Error(err)
+	}
+
+	n, _ := tree.Find(testKey)
+	if n.value != testVal {
+		t.Errorf("expected: %s, got: %s", testVal, n.value)
+	}
+}
+
 func TestInorder(t *testing.T) {
 	tree := NewTree()
 	keys := []string{"x", "c", "a", "y", "b", "z"}

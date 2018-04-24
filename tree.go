@@ -138,6 +138,19 @@ func (tree *Tree) Insert(key []byte, value interface{}) error {
 	return nil
 }
 
+// Update replaces the value of the first node that matches the given key.
+func (tree *Tree) Update(key []byte, value interface{}) error {
+	tree.mtx.Lock()
+	defer tree.mtx.Unlock()
+
+	n, ok := tree.find(key)
+	if !ok {
+		return fmt.Errorf("key not found")
+	}
+	n.value = value
+	return nil
+}
+
 // Delete removes a node from the Tree that matches the given key.
 func (tree *Tree) Delete(key []byte) error {
 	return fmt.Errorf("Unimplemented")
