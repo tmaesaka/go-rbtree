@@ -46,6 +46,11 @@ func (n *node) uncle() *node {
 	return n.parent.sibling()
 }
 
+// isLeaf returns whether the node is a leaf node.
+func (n *node) isLeaf() bool {
+	return n.left == nil && n.right == nil
+}
+
 // minNode returns a pointer to the minimum node in the subtree.
 func (n *node) minNode() *node {
 	curr := n
