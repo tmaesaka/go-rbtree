@@ -59,3 +59,13 @@ func (n *node) minNode() *node {
 	}
 	return curr
 }
+
+// nodeColor returns the color of the node. This function is useful
+// to simplify the code without introducing sentinel nodes.
+func nodeColor(n *node) Color {
+	// All leaves are black in a Red-Black Tree.
+	if n == nil {
+		return Black
+	}
+	return n.color
+}
