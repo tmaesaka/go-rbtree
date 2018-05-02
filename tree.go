@@ -95,7 +95,7 @@ func (tree *Tree) Insert(key []byte, value interface{}) error {
 		}
 
 		// Case 2: Parent node is painted black, nothing to do.
-		if curr.parent.color == Black {
+		if nodeColor(curr.parent) == Black {
 			break
 		}
 
@@ -104,7 +104,7 @@ func (tree *Tree) Insert(key []byte, value interface{}) error {
 		grandparent := curr.grandparent()
 
 		// Case 3: Parent and Uncle nodes are painted red.
-		if uncle != nil && uncle.color == Red {
+		if uncle != nil && nodeColor(uncle) == Red {
 			curr.parent.color = Black
 			uncle.color = Black
 			grandparent.color = Red
